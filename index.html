@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="zh">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>猜数字（1~100）</title>
+  <style>
+    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;max-width:560px;margin:24px auto;padding:0 16px;line-height:1.6}
+    .card{border:1px solid #eee;border-radius:12px;padding:16px;box-shadow:0 6px 16px rgba(0,0,0,.06)}
+    input[type=number]{width:100%;padding:10px;border-radius:8px;border:1px solid #ccc;box-sizing:border-box}
+    button{padding:10px 14px;border:0;border-radius:8px;background:#1a73e8;color:#fff;cursor:pointer}
+    button:disabled{opacity:.6;cursor:not-allowed}
+    .hint{margin-top:10px}
+    .muted{color:#666;font-size:13px}
+  </style>
+</head>
+<body>
+  <h2>🎯 猜数字（1~100）</h2>
+  <div class="card">
+    <p id="status">我已经想好了 1~100 的一个数，来猜吧！</p>
+    <input id="guess" type="number" placeholder="输入数字后回车或点确定" />
+    <div style="margin-top:10px;display:flex;gap:8px">
+      <button id="ok">确定</button>
+      <button id="again" disabled>再来一局</button>
+    </div>
+    <p class="hint" id="hint"></p>
+    <p class="muted" id="tries">尝试次数：0</p>
+  </div>
+
+  <script>
+    let target = Math.floor(Math.random()*100)+1;
+    let tries = 0;
+    const s = id => document.getElementById(id);
+    function check(){
+      const v = Number(s("guess").value);
+      if(!Number.isInteger(v) || v<1 || v>100){
+        s("hint").textContent = "请输入 1~100 的整数";
+        return;
+      }
+      tries++;
+      s("tries").textContent = "尝试次数：" + tries;
+      if(v < target) s("hint").textContent = "太小了 ↑";
+      else if(v > target) s("hint").textContent = "太大了 ↓";
+      else{
+        s("status").textContent = `✅ 恭喜！你用了 ${tries} 次就猜对了！答案是 ${target}`;
+        s("ok").disabled = true;
+        s("again").disabled = false;
+      }
+      s("guess").value = "";
+      s("guess").focus();
+    }
+    s("ok").onclick = check;
+    s("guess").addEventListener("keydown", e => { if(e.key==="Enter") check(); });
+    s("again").onclick = () => {
+      target = Math.floor(Math.random()*100)+1;
+      tries = 0;
+      s("tries").textContent = "尝试次数：0";
+      s("status").textContent = "我已经想好了 1~100 的一个数，来猜吧！";
+      s("hint").textContent = "";
+      s("ok").disabled = false;
+      s("again").disabled = true;
+      s("guess").focus();
+    };
+  </script>
+</body>
+</html>
